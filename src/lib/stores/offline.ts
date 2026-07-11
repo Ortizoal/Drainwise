@@ -1,5 +1,4 @@
 import { writable } from 'svelte/store';
-import { openDB } from 'idb';
 
 const DB_NAME = 'drainwise-offline';
 const STORE_NAME = 'pending-reports';
@@ -7,7 +6,11 @@ const STORE_NAME = 'pending-reports';
 export const queuedCount = writable(0);
 export const isOnline = writable(true);
 
+const browser = typeof window !== 'undefined';
+
 async function getDB() {
+  if (!browser) return null;
+  const { openDB } = await import('idb');
   return openDB(DB_NAME, 1, {
     upgrade(db) {
       if (!db.objectStoreNames.contains(STORE_NAME)) {
@@ -19,6 +22,7 @@ async function getDB() {
 
 export async function queueReport(report: any) {
   const db = await getDB();
+  if (!db) return null;
   const entry = {
     ...report,
     offline_id: crypto.randomUUID(),
@@ -32,17 +36,20 @@ export async function queueReport(report: any) {
 
 export async function getQueuedReports() {
   const db = await getDB();
+  if (!db) return [];
   return db.getAll(STORE_NAME);
 }
 
 export async function removeQueuedReport(offlineId: string) {
   const db = await getDB();
+  if (!db) return;
   await db.delete(STORE_NAME, offlineId);
   await updateCount();
 }
 
 async function updateCount() {
   const db = await getDB();
+  if (!db) return;
   const all = await db.getAllKeys(STORE_NAME);
   queuedCount.set(all.length);
 }
