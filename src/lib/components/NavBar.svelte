@@ -1,5 +1,7 @@
 <script>
   import { page } from '$app/stores';
+  import { user, profile, isAdmin } from '$lib/stores/auth';
+  import { supabase } from '$lib/client/supabase';
 </script>
 
 <nav class="bg-emerald-700 text-white shadow-lg sticky top-0 z-50">
