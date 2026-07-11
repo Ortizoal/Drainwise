@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
-import { supabase } from '$lib/client/supabase';
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
+import { supabase } from '$lib/client/supabase';
 
 export const reports = writable<any[]>([]);
 export const loading = writable(true);
