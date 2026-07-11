@@ -1,4 +1,9 @@
+<script context="module">
+  export const ssr = false;
+</script>
+
 <script>
+  import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import { supabase } from '$lib/client/supabase';
   import { PUBLIC_SUPABASE_URL } from '$env/static/public';
@@ -31,7 +36,9 @@
     upvoting = false;
   }
 
-  $: if ($page.params.id) loadReport();
+  onMount(() => {
+    loadReport();
+  });
 </script>
 
 {#if loading}
@@ -69,8 +76,8 @@
       {#if report.image_urls?.length}
         <div class="grid grid-cols-2 gap-2">
           {#each report.image_urls as url}
-      <img
-            src="{PUBLIC_SUPABASE_URL}/storage/v1/object/public/report-images/{url}"
+            <img
+            src={`${PUBLIC_SUPABASE_URL}/storage/v1/object/public/report-images/${url}`}
             alt=""
             class="rounded-lg w-full h-32 object-cover"
           />
